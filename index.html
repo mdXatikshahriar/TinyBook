@@ -1,62 +1,125 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>TinyBook</title>
-    <style>
-        body { font-family: Arial; background: #f0f2f5; margin: 0; padding: 20px; }
-        .app { max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
-        h1 { color: #1877f2; text-align: center; }
-        textarea { width: 100%; height: 80px; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
-        button { background: #1877f2; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-        .post { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #1877f2; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TinyBook - Social Network</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app">
-        <h1>📚 TinyBook</h1>
-        <textarea id="postContent" placeholder="What's on your mind?"></textarea>
-        <button onclick="createPost()">Post</button>
-        <div id="wall"></div>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen">
+        <div class="login-container">
+            <div class="login-box">
+                <h1><i class="fas fa-book"></i> TinyBook</h1>
+                <p>Connect with friends and the world around you on TinyBook.</p>
+                <div class="login-form">
+                    <input type="email" id="loginEmail" placeholder="Email address">
+                    <input type="password" id="loginPassword" placeholder="Password">
+                    <button class="btn-primary" onclick="login()">Log In</button>
+                    <button class="btn-secondary" onclick="showSignup()">Create New Account</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script>
-        let posts = [];
-        
-        function createPost() {
-            const content = document.getElementById('postContent').value;
-            if (content) {
-                const post = {
-                    content: content,
-                    time: new Date().toLocaleString()
-                };
-                posts.unshift(post);
-                document.getElementById('postContent').value = '';
-                showPosts();
-            }
-        }
-        
-        function showPosts() {
-            const wall = document.getElementById('wall');
-            wall.innerHTML = '';
-            posts.forEach(post => {
-                wall.innerHTML += `
-                    <div class="post">
-                        <p>${post.content}</p>
-                        <small>${post.time}</small>
-                    </div>
-                `;
-            });
-        }
-        
-        showPosts();
-    </script>
-</body>
-</html>                <textarea id="postContent" placeholder="What's on your mind?"></textarea>
-                <button onclick="createPost()">Post to Wall</button>
+    <!-- Signup Screen -->
+    <div id="signupScreen" class="screen hidden">
+        <div class="login-container">
+            <div class="login-box">
+                <h1><i class="fas fa-book"></i> Sign Up</h1>
+                <p>It's quick and easy.</p>
+                <div class="login-form">
+                    <input type="text" id="signupName" placeholder="Full name">
+                    <input type="email" id="signupEmail" placeholder="Email address">
+                    <input type="password" id="signupPassword" placeholder="New password">
+                    <button class="btn-primary" onclick="signup()">Sign Up</button>
+                    <button class="btn-link" onclick="showLogin()">Already have an account?</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appScreen" class="screen hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <h1><i class="fas fa-book"></i> TinyBook</h1>
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search TinyBook">
+                </div>
+                <div class="header-menu">
+                    <img src="https://via.placeholder.com/32" alt="Profile" class="profile-pic-sm">
+                    <span id="userName">User</span>
+                    <button onclick="logout()" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="container">
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <div class="user-profile">
+                    <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic">
+                    <span id="profileName">User Name</span>
+                </div>
+                <div class="menu-item active">
+                    <i class="fas fa-home"></i>
+                    <span>News Feed</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-user-friends"></i>
+                    <span>Friends</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-users"></i>
+                    <span>Groups</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
             </div>
 
-            <div id="wall">
-                <!-- Posts will appear here -->
+            <!-- News Feed -->
+            <div class="news-feed">
+                <!-- Create Post -->
+                <div class="create-post">
+                    <div class="post-input">
+                        <img src="https://via.placeholder.com/40" alt="Profile" class="profile-pic">
+                        <input type="text" id="postContent" placeholder="What's on your mind?">
+                    </div>
+                    <div class="post-actions">
+                        <button class="post-btn" onclick="createPost()">Post</button>
+                    </div>
+                </div>
+
+                <!-- Posts Container -->
+                <div id="postsContainer">
+                    <!-- Posts will appear here -->
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="right-sidebar">
+                <div class="contacts">
+                    <h3>Sponsored</h3>
+                    <div class="sponsored">
+                        <p>Advertisement</p>
+                    </div>
+                    
+                    <h3>Your Pages</h3>
+                    <div class="pages">
+                        <div class="page-item">
+                            <i class="fas fa-flag"></i>
+                            <span>Create Page</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
