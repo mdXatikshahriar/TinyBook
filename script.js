@@ -1,50 +1,139 @@
-// Array to store our posts (in a real app, this would be a database)
+// Firebase Configuration - YOUR CONFIG HERE
+const firebaseConfig = {
+  apiKey: "AIzaSyBgk...",
+  authDomain: "tinybook-1ac50.firebaseapp.com",
+  projectId: "tinybook-1ac50",
+  storageBucket: "tinybook-1ac50.appspot.com",
+  messagingSenderId: "588288211737",
+  appId: "1:588288211737:web:abc123..."
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// Array to store our posts
 let posts = [];
 
-// Function to create a new post
+// Authentication Functions
+function login() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            showAppScreen();
+        })
+        .catch((error) => {
+            alert('Login failed: ' + error.message);
+        });
+}
+
+function signup() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    
+    auth.createUserWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            showAppScreen();
+        })
+        .catch((error) => {
+            alert('Signup failed: ' + error.message);
+        });
+}
+
+function logout() {
+    auth.signOut();
+    showLoginScreen();
+}
+
+// Screen Management
+function showLoginScreen() {
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('appScreen').classList.add('hidden');
+}
+
+function showAppScreen() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('appScreen').classList.remove('hidden');
+    loadPosts();
+}
+
+// Check auth state
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        showAppScreen();
+    } else {
+        showLoginScreen();
+    }
+});
+
+// Post Functions
 function createPost() {
+    const user = auth.currentUser;
     const postContent = document.getElementById('postContent').value;
+    
+    if (!user) {
+        alert('Please login first!');
+        return;
+    }
     
     if (postContent.trim() === '') {
         alert('Please write something first!');
         return;
     }
 
-    // Create post object
     const newPost = {
         content: postContent,
         timestamp: new Date().toLocaleString(),
-        id: Date.now() // Simple unique ID
+        userId: user.uid,
+        userEmail: user.email,
+        id: Date.now()
     };
 
-    // Add to our posts array
-    posts.unshift(newPost); // Add to beginning so newest shows first
-
-    // Clear the textarea
-    document.getElementById('postContent').value = '';
-
-    // Update the wall display
-    displayPosts();
+    // Save to Firebase
+    db.collection('posts').add(newPost)
+        .then(() => {
+            document.getElementById('postContent').value = '';
+            loadPosts();
+        })
+        .catch((error) => {
+            alert('Error posting: ' + error.message);
+        });
 }
 
-// Function to display all posts
+function loadPosts() {
+    db.collection('posts').orderBy('timestamp', 'desc').get()
+        .then((querySnapshot) => {
+            posts = [];
+            querySnapshot.forEach((doc) => {
+                posts.push(doc.data());
+            });
+            displayPosts();
+        })
+        .catch((error) => {
+            console.log('Error loading posts:', error);
+        });
+}
+
 function displayPosts() {
     const wall = document.getElementById('wall');
-    
-    // Clear current display
     wall.innerHTML = '';
 
-    // Add each post to the wall
     posts.forEach(post => {
         const postElement = document.createElement('div');
         postElement.className = 'post';
         postElement.innerHTML = `
+            <div class="post-header">
+                <strong>${post.userEmail}</strong>
+                <span class="timestamp">${post.timestamp}</span>
+            </div>
             <p>${post.content}</p>
-            <div class="timestamp">Posted on ${post.timestamp}</div>
         `;
         wall.appendChild(postElement);
     });
 }
 
-// Load any existing posts when page loads (none for now)
-displayPosts();
+// Initial load
+showLoginScreen();
