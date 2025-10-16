@@ -1,40 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TinyBook - Social Network</title>
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <title>TinyBook</title>
+    <style>
+        body { font-family: Arial; background: #f0f2f5; margin: 0; padding: 20px; }
+        .app { max-width: 500px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; }
+        h1 { color: #1877f2; text-align: center; }
+        textarea { width: 100%; height: 80px; padding: 10px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; }
+        button { background: #1877f2; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+        .post { background: #f8f9fa; padding: 15px; margin: 10px 0; border-radius: 5px; border-left: 4px solid #1877f2; }
+    </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="loginScreen" class="screen">
-        <div class="app">
-            <h1>📚 TinyBook</h1>
-            <div class="login-form">
-                <input type="email" id="email" placeholder="Email Address">
-                <input type="password" id="password" placeholder="Password">
-                <button onclick="login()">Login</button>
-                <button onclick="signup()">Sign Up</button>
-            </div>
-        </div>
+    <div class="app">
+        <h1>📚 TinyBook</h1>
+        <textarea id="postContent" placeholder="What's on your mind?"></textarea>
+        <button onclick="createPost()">Post</button>
+        <div id="wall"></div>
     </div>
 
-    <!-- Main App Screen -->
-    <div id="appScreen" class="screen hidden">
-        <div class="app">
-            <div class="header">
-                <h1>📚 TinyBook</h1>
-                <button onclick="logout()" class="logout-btn">Logout</button>
-            </div>
-            
-            <div class="post-creator">
-                <textarea id="postContent" placeholder="What's on your mind?"></textarea>
+    <script>
+        let posts = [];
+        
+        function createPost() {
+            const content = document.getElementById('postContent').value;
+            if (content) {
+                const post = {
+                    content: content,
+                    time: new Date().toLocaleString()
+                };
+                posts.unshift(post);
+                document.getElementById('postContent').value = '';
+                showPosts();
+            }
+        }
+        
+        function showPosts() {
+            const wall = document.getElementById('wall');
+            wall.innerHTML = '';
+            posts.forEach(post => {
+                wall.innerHTML += `
+                    <div class="post">
+                        <p>${post.content}</p>
+                        <small>${post.time}</small>
+                    </div>
+                `;
+            });
+        }
+        
+        showPosts();
+    </script>
+</body>
+</html>                <textarea id="postContent" placeholder="What's on your mind?"></textarea>
                 <button onclick="createPost()">Post to Wall</button>
             </div>
 
