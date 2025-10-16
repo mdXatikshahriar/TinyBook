@@ -3,20 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TinyBook - Public Wall</title>
+    <title>TinyBook - Social Network</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 </head>
 <body>
-    <div class="app">
-        <h1>📝 TinyBook Wall</h1>
-        
-        <div class="post-creator">
-            <textarea id="postContent" placeholder="What's on your mind?"></textarea>
-            <button onclick="createPost()">Post to Wall</button>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen">
+        <div class="app">
+            <h1>📚 TinyBook</h1>
+            <div class="login-form">
+                <input type="email" id="email" placeholder="Email Address">
+                <input type="password" id="password" placeholder="Password">
+                <button onclick="login()">Login</button>
+                <button onclick="signup()">Sign Up</button>
+            </div>
         </div>
+    </div>
 
-        <div id="wall">
-            <!-- Posts will appear here -->
+    <!-- Main App Screen -->
+    <div id="appScreen" class="screen hidden">
+        <div class="app">
+            <div class="header">
+                <h1>📚 TinyBook</h1>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+            
+            <div class="post-creator">
+                <textarea id="postContent" placeholder="What's on your mind?"></textarea>
+                <button onclick="createPost()">Post to Wall</button>
+            </div>
+
+            <div id="wall">
+                <!-- Posts will appear here -->
+            </div>
         </div>
     </div>
 
